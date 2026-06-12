@@ -1,7 +1,4 @@
-using Praticando01.Data;
-using Praticando01.Services;
-
-namespace Praticando01;
+namespace ERP;
 
 class Program
 {

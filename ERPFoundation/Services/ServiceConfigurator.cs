@@ -1,7 +1,4 @@
-﻿using Praticando01.Data;
-using Praticando01.Repositories;
-
-namespace Praticando01.Services;
+namespace ERP;
 
 public class ServiceConfigurator
 {

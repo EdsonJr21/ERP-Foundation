@@ -1,7 +1,4 @@
-using Praticando01.Models;
-using Praticando01.Repositories;
-
-namespace Praticando01.Services;
+namespace ERP;
 
 public class ProdutoService : IProdutoService
 {

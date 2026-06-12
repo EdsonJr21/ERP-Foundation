@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Praticando01.Data;
-using Praticando01.Models;
-
-namespace Praticando01.Repositories;
+namespace ERP;
 
 public class ProdutoRepository : IProdutoRepository
 {

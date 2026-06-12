@@ -1,6 +1,4 @@
-using Praticando01.Models;
-
-namespace Praticando01.Repositories;
+namespace ERP;
 
 public interface IProdutoRepository
 {

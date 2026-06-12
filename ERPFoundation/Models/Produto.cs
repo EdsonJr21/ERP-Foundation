@@ -1,4 +1,4 @@
-﻿namespace Praticando01.Models;
+﻿namespace ERP;
 
 public class Produto
 {

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Praticando01.Models;
-
-namespace Praticando01.Data;
+namespace ERP;
 
 public class AppDbContext : DbContext
 {
