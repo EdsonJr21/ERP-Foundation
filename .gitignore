@@ -5,13 +5,41 @@ obj/
 # Rider
 .idea/
 
-# Logs
-*.log
+# Visual Studio
+.vs/
 
 # User settings
 *.user
 *.rsuser
+*.suo
+
+# Logs
+*.log
+
+# EF Core Local Database Files
+*.db
+*.db-shm
+*.db-wal
+
+# Publish
+publish/
+
+# Test Results
+TestResults/
+
+# Environment files
+.env
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# NuGet
+*.nupkg
+
+# Generated files
+Generated/
+
+# Coverage
+coverage/
+coverage.xml
