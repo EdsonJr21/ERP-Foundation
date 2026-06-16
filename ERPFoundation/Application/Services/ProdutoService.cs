@@ -1,4 +1,8 @@
-namespace ERP;
+using ERPFoundation.Application.Services.Interfaces;
+using ERPFoundation.Domain.Models;
+using ERPFoundation.Infrastructure.Repositories.Interfaces;
+
+namespace ERPFoundation.Application.Services;
 
 public class ProdutoService : IProdutoService
 {

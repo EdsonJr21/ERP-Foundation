@@ -1,5 +1,9 @@
+using ERPFoundation.Domain.Models;
+using ERPFoundation.Infrastructure.Data;
+using ERPFoundation.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-namespace ERP;
+
+namespace ERPFoundation.Infrastructure.Repositories;
 
 public class ProdutoRepository : IProdutoRepository
 {

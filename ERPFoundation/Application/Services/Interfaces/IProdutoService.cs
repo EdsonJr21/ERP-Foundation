@@ -1,4 +1,6 @@
-namespace ERP;
+using ERPFoundation.Domain.Models;
+
+namespace ERPFoundation.Application.Services.Interfaces;
 
 public interface IProdutoService
 {

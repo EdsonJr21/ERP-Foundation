@@ -1,4 +1,6 @@
-namespace ERP;
+using ERPFoundation.Domain.Models;
+
+namespace ERPFoundation.Infrastructure.Repositories.Interfaces;
 
 public interface IProdutoRepository
 {

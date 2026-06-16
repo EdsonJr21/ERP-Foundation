@@ -1,4 +1,7 @@
-namespace ERP;
+using ERPFoundation.Application.Configuration;
+using ERPFoundation.Infrastructure.Data;
+
+namespace ERPFoundation;
 
 class Program
 {
