@@ -1,10 +1,11 @@
 ﻿using ERPFoundation.Domain.Models;
 using ERPFoundation.Infrastructure.Data;
+using ERPFoundation.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPFoundation.Infrastructure.Repositories;
 
-public class FornecedorRepository
+public class FornecedorRepository : IFornecedorRepository
 {
     private readonly AppDbContext _context;
 
@@ -17,45 +18,97 @@ public class FornecedorRepository
     {
         ArgumentNullException.ThrowIfNull(fornecedor);
 
-        await _context.Fornecedores.AddAsync(fornecedor);
+        try
+        {
+            await _context.Fornecedores.AddAsync(fornecedor);
 
-        return await _context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ApplicationException("Erro ao adicionar fornecedor (DB).", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao adicionar fornecedor.", ex);
+        }
     }
 
     public async Task<List<Fornecedor>> ListarFornecedoresAsync()
     {
-        return await _context.Fornecedores.ToListAsync();
+        try
+        {
+            return await _context.Fornecedores.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao listar fornecedores.", ex);
+        }
     }
 
     public async Task<Fornecedor?> BuscarPorIdAsync(int id)
     {
-        return await _context.Fornecedores
-            .FirstOrDefaultAsync(f => f.Id == id);
+        try
+        {
+            return await _context.Fornecedores
+                .FirstOrDefaultAsync(f => f.Id == id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao buscar fornecedor por ID.", ex);
+        }
     }
 
-    public async Task<Fornecedor?> BuscaPorNomeAsync(string nome)
-    {
-        return await _context.Fornecedores
-            .FirstOrDefaultAsync(f => f.Nome == nome);
-    }
-    
     public async Task<Fornecedor?> BuscaPorCnpjAsync(string cnpj)
     {
-        return await _context.Fornecedores
-            .FirstOrDefaultAsync(f => f.Cnpj == cnpj);
+        try
+        {
+            return await _context.Fornecedores
+                .FirstOrDefaultAsync(f => f.Cnpj == cnpj);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao buscar fornecedor por CNPJ.", ex);
+        }
     }
 
     public async Task<bool> AtualizarFornecedorAsync(Fornecedor fornecedor)
     {
-        _context.Fornecedores.Update(fornecedor);
+        ArgumentNullException.ThrowIfNull(fornecedor);
 
-        return await _context.SaveChangesAsync() > 0;
+        try
+        {
+            _context.Fornecedores.Update(fornecedor);
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ApplicationException("Erro ao atualizar fornecedor (DB).", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao atualizar fornecedor.", ex);
+        }
     }
 
     public async Task<bool> RemoverFornecedorAsync(Fornecedor fornecedor)
     {
-        _context.Fornecedores.Remove(fornecedor);
+        ArgumentNullException.ThrowIfNull(fornecedor);
 
-        return await _context.SaveChangesAsync() > 0;
+        try
+        {
+            _context.Fornecedores.Remove(fornecedor);
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ApplicationException("Erro ao remover fornecedor (DB).", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Erro ao remover fornecedor.", ex);
+        }
     }
 }

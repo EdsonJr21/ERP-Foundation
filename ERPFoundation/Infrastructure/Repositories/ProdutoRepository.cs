@@ -66,7 +66,7 @@ public class ProdutoRepository : IProdutoRepository
         }
     }
 
-    public async Task<bool> AtualizarProdutosAsync(int id, string nome, double preco, int quantidade)
+    public async Task<bool> AtualizarProdutosAsync(int id, string nome, decimal preco, int quantidade)
     {
         try
         {
@@ -139,6 +139,22 @@ public class ProdutoRepository : IProdutoRepository
         {
             throw new ApplicationException(
                 "Erro ao verificar SKU.",
+                ex);
+        }
+    }
+
+    public async Task<bool> ExisteFornecedorAsync(int fornecedorId)
+    {
+        if (fornecedorId <= 0) return false;
+
+        try
+        {
+            return await _context.Fornecedores.AnyAsync(f => f.Id == fornecedorId);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(
+                "Erro ao verificar fornecedor.",
                 ex);
         }
     }

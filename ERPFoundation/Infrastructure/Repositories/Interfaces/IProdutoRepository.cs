@@ -11,11 +11,12 @@ public interface IProdutoRepository
     Task<bool> AtualizarProdutosAsync(
         int id,
         string novoNome,
-        double novoPreco,
+        decimal novoPreco,
         int novaQuantidade);
 
     Task<Produto?> ObterPorIdAsync(int id);
 
     Task<bool> RemoverProdutosAsync(Produto produto);
     Task<bool> ExisteSkuAsync(string sku);
+    Task<bool> ExisteFornecedorAsync(int fornecedorId);
 }

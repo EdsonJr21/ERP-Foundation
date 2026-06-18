@@ -17,12 +17,38 @@ public class ProdutoService : IProdutoService
     public async Task<bool> CadastrarProdutoAsync(
         string sku,
         string nome,
-        double preco,
-        int quantidade)
+        decimal preco,
+        int quantidade,
+        int fornecedorId)
     {
-        if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(sku) || preco < 0 || quantidade < 0)
+        var resultado = await CadastrarProdutoComDiagnosticoAsync(
+            sku,
+            nome,
+            preco,
+            quantidade,
+            fornecedorId);
+
+        return resultado.Cadastrado;
+    }
+
+    public async Task<(bool Cadastrado, string? Motivo)> CadastrarProdutoComDiagnosticoAsync(
+        string sku,
+        string nome,
+        decimal preco,
+        int quantidade,
+        int fornecedorId)
+    {
+        if (string.IsNullOrWhiteSpace(nome) ||
+            string.IsNullOrWhiteSpace(sku) ||
+            quantidade < 0 ||
+            fornecedorId <= 0)
         {
-            return false;
+            return (false, "Dados invalidos: SKU e nome sao obrigatorios, quantidade nao pode ser negativa e fornecedor deve ser maior que zero.");
+        }
+
+        if (preco <= 0)
+        {
+            return (false, "Dados invalidos: preco deve ser maior que zero.");
         }
 
         var skuNorm = sku.Trim().ToUpperInvariant();
@@ -30,11 +56,20 @@ public class ProdutoService : IProdutoService
 
         if (await _produtoRepository.ExisteSkuAsync(skuNorm))
         {
-            return false;
+            return (false, $"SKU '{skuNorm}' ja esta cadastrado.");
         }
 
-        var produto = new Produto(skuNorm, nomeNorm, preco, quantidade);
-        return await _produtoRepository.AdicionarProdutosAsync(produto);
+        if (!await _produtoRepository.ExisteFornecedorAsync(fornecedorId))
+        {
+            return (false, $"Fornecedor com ID {fornecedorId} nao existe.");
+        }
+
+        var produto = new Produto(skuNorm, nomeNorm, preco, quantidade, fornecedorId);
+        var cadastrado = await _produtoRepository.AdicionarProdutosAsync(produto);
+
+        return cadastrado
+            ? (true, null)
+            : (false, "Repositorio retornou falso ao salvar o produto.");
     }
 
 
@@ -56,7 +91,7 @@ public class ProdutoService : IProdutoService
     public async Task<bool> AtualizarProdutosAsync(
         int id,
         string nome,
-        double preco,
+        decimal preco,
         int quantidade)
     {
         if (id <= 0 || string.IsNullOrWhiteSpace(nome) || preco < 0 || quantidade < 0)

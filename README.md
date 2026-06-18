@@ -1,22 +1,10 @@
 # ERP-Foundation
 
-Projeto desenvolvido para estudo de **C#**, **.NET**, **Entity Framework Core**, **MySQL** e **arquitetura de software**, evoluindo gradualmente para um sistema **ERP** com **API REST**, autenticação e testes automatizados.
+## Sobre o Projeto
 
----
+ERP Foundation é um projeto de estudo desenvolvido em **C#**, **.NET**, **Entity Framework Core** e **MySQL**, com foco em arquitetura de software e boas práticas de desenvolvimento backend.
 
-## Objetivos
-
-* Aprimorar conhecimentos em C#
-* Aplicar Programação Orientada a Objetos (POO)
-* Implementar arquitetura em camadas
-* Trabalhar com Entity Framework Core e MySQL
-* Utilizar Repository Pattern e Service Layer
-* Aplicar consultas avançadas com LINQ
-* Utilizar operações assíncronas com Async/Await
-* Desenvolver APIs REST com ASP.NET Core
-* Aplicar autenticação e autorização com JWT
-* Utilizar testes automatizados
-* Simular funcionalidades presentes em sistemas ERP reais
+O objetivo é evoluir gradualmente a aplicação de um sistema console para uma **API REST completa**, aplicando conceitos e padrões utilizados em sistemas ERP corporativos.
 
 ---
 
@@ -26,9 +14,6 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **Entity Framework Core**,
 * .NET
 * Entity Framework Core
 * MySQL
-* LINQ
-* Async/Await
-* Migrations
 * Git
 * GitHub
 
@@ -38,26 +23,44 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **Entity Framework Core**,
 
 ### Produtos
 
-* Cadastro de Produtos
-* Atualização de Produtos
-* Remoção de Produtos
-* Consulta de Produtos
+* Cadastro
+* Consulta
+* Atualização
+* Remoção
 
 ### Fornecedores
 
-* Cadastro de Fornecedores
-* Consulta de Fornecedores
+* Cadastro
+* Consulta
+* Atualização
+* Remoção
 
-### Infraestrutura
+### Regras Implementadas
 
+* Relacionamento entre Produtos e Fornecedores
+* Validação de dados com Data Annotations
+* Configurações de entidades com Fluent API
+* Controle de unicidade de CNPJ
 * Persistência de dados com Entity Framework Core
-* Banco de dados MySQL
-* Controle de schema com Migrations
 * Operações assíncronas com Async/Await
 * Consultas utilizando LINQ
-* Arquitetura em camadas
+
+---
+
+## Arquitetura
+
+O projeto segue uma arquitetura em camadas inspirada em aplicações corporativas:
+
+* **Domain** → Entidades e regras centrais do sistema
+* **Application** → Regras de negócio e serviços
+* **Infrastructure** → Persistência de dados e configurações
+* **Presentation** → Interface de interação com o usuário
+
+### Padrões Aplicados
+
 * Repository Pattern
 * Service Layer
+* Dependency Injection
 
 ---
 
@@ -65,104 +68,69 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **Entity Framework Core**,
 
 ```text
 ERP-Foundation/
-│
-├── ERP-Foundation.sln
-│
-└── ERPFoundation/
-    │
-    ├── Application/
-    │   ├── Configuration/
-    │   └── Services/
-    │       ├── Interfaces/
-    │       ├── ProdutoService.cs
-    │       └── FornecedorService.cs
-    │
-    ├── Domain/
-    │   └── Models/
-    │       ├── Produto.cs
-    │       └── Fornecedor.cs
-    │
-    ├── Infrastructure/
-    │   ├── Data/
-    │   └── Repositories/
-    │       ├── Interfaces/
-    │       ├── ProdutoRepository.cs
-    │       └── FornecedorRepository.cs
-    │
-    ├── Migrations/
-    ├── Docs/
-    ├── Program.cs
-    └── ERPFoundation.csproj
-```
-
----
-
-## Conceitos Aplicados
-
-* Programação Orientada a Objetos (POO)
-* Arquitetura em Camadas
-* Repository Pattern
-* Service Layer
-* Entity Framework Core
-* LINQ
-* Async/Await
-* Migrations
-* Tratamento de Exceções
-* Persistência de Dados
-
----
-
-## Documentação
-
-* [Roadmap](./ERPFoundation/Docs/Roadmap.md)
-
----
-
-## Configuração
-
-Antes de executar o projeto, ajuste a Connection String no `AppDbContext` para o seu ambiente local.
-
-Exemplo:
-
-```json
-"Server=localhost;Database=erpfoundation;User=root;Password=sua_senha;"
+├─ ERPFoundation/
+│  ├─ Application/
+│  │  └─ Services/
+│  ├─ Domain/
+│  │  └─ Models/
+│  ├─ Infrastructure/
+│  │  ├─ Data/
+│  │  ├─ DependencyInjection/
+│  │  └─ Repositories/
+│  ├─ Migrations/
+│  ├─ Presentation/
+│  │  └─ ConsoleUI/
+│  ├─ Program.cs
+│  └─ ERPFoundation.csproj
+├─ ERP-Foundation.sln
+└─ README.md
 ```
 
 ---
 
 ## Como Executar
 
-1. Clone o repositório
+### 1. Clone o repositório
 
 ```bash
 git clone https://github.com/EdsonJr21/ERP-Foundation.git
 ```
 
-2. Entre na raiz do projeto
+### 2. Entre na pasta do projeto
 
 ```bash
 cd ERP-Foundation
 ```
 
-3. Entre na pasta da aplicação
+### 3. Entre na aplicação
 
 ```bash
 cd ERPFoundation
 ```
 
-4. Restaure os pacotes
+### 4. Restaure os pacotes
 
 ```bash
 dotnet restore
 ```
 
-5. Execute as migrations
+### 5. Configure a conexão com o banco de dados
+
+Ajuste a Connection String no `AppDbContext` para o seu ambiente local.
+
+Exemplo:
+
+```text
+Server=localhost;Database=erpfoundation;User=root;Password=sua_senha;
+```
+
+### 6. Execute as migrations
 
 ```bash
 dotnet ef database update
 ```
 
-6. Execute o projeto
+### 7. Execute a aplicação
 
 ```bash
 dotnet run
@@ -172,35 +140,39 @@ dotnet run
 
 ## Status
 
-🚧 Projeto em evolução contínua, utilizado como base prática para aprofundamento em desenvolvimento .NET e construção de um ERP.
+🚧 Projeto em evolução contínua, utilizado como laboratório prático para aprofundamento em desenvolvimento backend com .NET.
 
-### Implementado
+### Concluído
 
-* Entity Framework Core
-* MySQL
-* Repository Pattern
-* Service Layer
-* LINQ
-* Async/Await
-* Migrations
-* Arquitetura em Camadas
 * CRUD de Produtos
 * CRUD de Fornecedores
-
-### Próximos Passos
-
+* Entity Framework Core
+* MySQL
+* Migrations
+* LINQ
+* Async/Await
+* Dependency Injection
 * Data Annotations
 * Fluent API
 * Relacionamentos entre Entidades
-* Dependency Injection
+* Arquitetura em Camadas
+
+### Próximas Etapas
+
 * ASP.NET Core Web API
+* DTOs
+* AutoMapper
+* Tratamento Global de Exceções
 * JWT Authentication
-* Testes Automatizados
+* Autorização por Roles
+* Testes Unitários
+* Testes de Integração
 * Docker
+* CI/CD
 * Deploy
 
 ---
 
 ## Autor
 
-Projeto desenvolvido por **EdsonJr21** como laboratório prático de estudos em desenvolvimento .NET.
+Desenvolvido por **EdsonJr21** como projeto de estudos para aprofundamento em desenvolvimento backend com .NET e construção gradual de um sistema ERP.

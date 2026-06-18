@@ -11,7 +11,7 @@ public class AppDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // quando for usar tem que ajustar a senha localmente antes de executar
-        string connectionString = "Server=localhost;Database=erpfoundation;User=root;Password=;";
+        const string connectionString = "Server=localhost;Database=erpfoundation;User=root;Password=;";
 
         optionsBuilder.UseMySql(
             connectionString,
@@ -20,10 +20,8 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Garante a unicidade de CNPJ no nível do banco
-        modelBuilder.Entity<Fornecedor>()
-            .HasIndex(f => f.Cnpj)
-            .IsUnique();
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(AppDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }

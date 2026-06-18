@@ -1,14 +1,16 @@
 ﻿using ERPFoundation.Domain.Models;
-using ERPFoundation.Infrastructure.Repositories;
+using ERPFoundation.Application.Services.Interfaces;
+using ERPFoundation.Infrastructure.Repositories.Interfaces;
 
 namespace ERPFoundation.Application.Services;
 
-public class FornecedorService
+public class FornecedorService : IFornecedorService
 {
-    private readonly FornecedorRepository _fornecedorRepository;
+    private readonly IFornecedorRepository _fornecedorRepository;
 
-    public FornecedorService(FornecedorRepository fornecedorRepository)
+    public FornecedorService(IFornecedorRepository fornecedorRepository)
     {
+        ArgumentNullException.ThrowIfNull(fornecedorRepository);
         _fornecedorRepository = fornecedorRepository;
     }
 
@@ -38,8 +40,15 @@ public class FornecedorService
         return await _fornecedorRepository.ListarFornecedoresAsync();
     }
 
+    public async Task<Fornecedor?> BuscarPorIdAsync(int id)
+    {
+        return await _fornecedorRepository.BuscarPorIdAsync(id);
+    }
+
     public async Task<bool> AtualizarFornecedorAsync(Fornecedor fornecedor)
     {
+        ArgumentNullException.ThrowIfNull(fornecedor);
+
         if (string.IsNullOrWhiteSpace(fornecedor.Nome) ||
             string.IsNullOrWhiteSpace(fornecedor.Cnpj) ||
             string.IsNullOrWhiteSpace(fornecedor.Endereco))

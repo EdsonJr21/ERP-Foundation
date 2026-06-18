@@ -4,6 +4,7 @@ obj/
 
 # Rider
 .idea/
+*.sln.DotSettings.user
 
 # Visual Studio
 .vs/
@@ -29,6 +30,7 @@ TestResults/
 
 # Environment files
 .env
+.env.*
 
 # OS files
 .DS_Store
@@ -36,6 +38,7 @@ Thumbs.db
 
 # NuGet
 *.nupkg
+packages/
 
 # Generated files
 Generated/
@@ -43,3 +46,21 @@ Generated/
 # Coverage
 coverage/
 coverage.xml
+
+# ASP.NET Core
+appsettings.Development.json
+
+# Secrets
+secrets.json
+
+# JetBrains Rider cache
+_ReSharper*/
+*.DotSettings.user
+
+# Backup files
+*.bak
+
+# Temporary files
+*.tmp
+
+.github
