@@ -2,9 +2,9 @@
 
 ## Sobre o Projeto
 
-ERP Foundation é um projeto de estudo desenvolvido em **C#**, **.NET**, **Entity Framework Core** e **MySQL**, com foco em arquitetura de software e boas práticas de desenvolvimento backend.
+ERP Foundation é um projeto de estudos desenvolvido em **C#**, **.NET**, **Entity Framework Core** e **MySQL**, com foco em desenvolvimento backend, arquitetura de software e boas práticas de programação.
 
-O objetivo é evoluir gradualmente a aplicação de um sistema console para uma **API REST completa**, aplicando conceitos e padrões utilizados em sistemas ERP corporativos.
+O objetivo é evoluir gradualmente a aplicação para simular componentes presentes em sistemas ERP reais, explorando conceitos utilizados em aplicações corporativas.
 
 ---
 
@@ -12,10 +12,11 @@ O objetivo é evoluir gradualmente a aplicação de um sistema console para uma 
 
 * C#
 * .NET
+* ASP.NET Core Web API
 * Entity Framework Core
 * MySQL
-* Git
-* GitHub
+* LINQ
+* Git e GitHub
 
 ---
 
@@ -35,11 +36,11 @@ O objetivo é evoluir gradualmente a aplicação de um sistema console para uma 
 * Atualização
 * Remoção
 
-### Regras Implementadas
+### Recursos Implementados
 
 * Relacionamento entre Produtos e Fornecedores
 * Validação de dados com Data Annotations
-* Configurações de entidades com Fluent API
+* Configuração de entidades com Fluent API
 * Controle de unicidade de CNPJ
 * Persistência de dados com Entity Framework Core
 * Operações assíncronas com Async/Await
@@ -49,14 +50,15 @@ O objetivo é evoluir gradualmente a aplicação de um sistema console para uma 
 
 ## Arquitetura
 
-O projeto segue uma arquitetura em camadas inspirada em aplicações corporativas:
+O projeto está organizado em camadas:
 
-* **Domain** → Entidades e regras centrais do sistema
-* **Application** → Regras de negócio e serviços
+* **Domain** → Entidades do domínio
+* **Application** → Serviços e regras de negócio
 * **Infrastructure** → Persistência de dados e configurações
-* **Presentation** → Interface de interação com o usuário
+* **Presentation** → Interface Console
+* **API** → Endpoints REST
 
-### Padrões Aplicados
+### Padrões Utilizados
 
 * Repository Pattern
 * Service Layer
@@ -68,101 +70,78 @@ O projeto segue uma arquitetura em camadas inspirada em aplicações corporativa
 
 ```text
 ERP-Foundation/
-├─ ERPFoundation/
-│  ├─ Application/
-│  │  └─ Services/
-│  ├─ Domain/
-│  │  └─ Models/
-│  ├─ Infrastructure/
-│  │  ├─ Data/
-│  │  ├─ DependencyInjection/
-│  │  └─ Repositories/
-│  ├─ Migrations/
-│  ├─ Presentation/
-│  │  └─ ConsoleUI/
-│  ├─ Program.cs
-│  └─ ERPFoundation.csproj
-├─ ERP-Foundation.sln
-└─ README.md
+│
+├── ERPFoundation/
+│   ├── Application/
+│   ├── Domain/
+│   ├── Infrastructure/
+│   ├── Presentation/
+│   └── Migrations/
+│
+├── ERPFoundation.API/
+│   ├── Controllers/
+│   └── DTOs/
+│
+├── ERP-Foundation.sln
+└── README.md
 ```
 
 ---
 
 ## Como Executar
 
-### 1. Clone o repositório
+### Clonar o repositório
 
 ```bash
 git clone https://github.com/EdsonJr21/ERP-Foundation.git
 ```
 
-### 2. Entre na pasta do projeto
-
-```bash
-cd ERP-Foundation
-```
-
-### 3. Entre na aplicação
-
-```bash
-cd ERPFoundation
-```
-
-### 4. Restaure os pacotes
+### Restaurar dependências
 
 ```bash
 dotnet restore
 ```
 
-### 5. Configure a conexão com o banco de dados
-
-Ajuste a Connection String no `AppDbContext` para o seu ambiente local.
-
-Exemplo:
-
-```text
-Server=localhost;Database=erpfoundation;User=root;Password=sua_senha;
-```
-
-### 6. Execute as migrations
+### Aplicar as migrations
 
 ```bash
-dotnet ef database update
+dotnet ef database update --project ERPFoundation
 ```
 
-### 7. Execute a aplicação
+### Executar a API
 
 ```bash
-dotnet run
+dotnet run --project ERPFoundation.API
 ```
 
 ---
 
 ## Status
 
-🚧 Projeto em evolução contínua, utilizado como laboratório prático para aprofundamento em desenvolvimento backend com .NET.
-
 ### Concluído
 
 * CRUD de Produtos
 * CRUD de Fornecedores
-* Entity Framework Core
-* MySQL
+* Entity Framework Core + MySQL
 * Migrations
 * LINQ
 * Async/Await
-* Dependency Injection
 * Data Annotations
 * Fluent API
 * Relacionamentos entre Entidades
 * Arquitetura em Camadas
+* Estrutura inicial da Web API
 
-### Próximas Etapas
+### Em Desenvolvimento
 
-* ASP.NET Core Web API
+* Endpoints REST
 * DTOs
+* Integração da API com a camada de serviços
+
+### Próximos Passos
+
 * AutoMapper
-* Tratamento Global de Exceções
+* Tratamento global de exceções
 * JWT Authentication
 * Autorização por Roles
 * Testes Unitários
@@ -175,4 +154,4 @@ dotnet run
 
 ## Autor
 
-Desenvolvido por **EdsonJr21** como projeto de estudos para aprofundamento em desenvolvimento backend com .NET e construção gradual de um sistema ERP.
+Desenvolvido por **EdsonJr21** como projeto de estudos e evolução prática em desenvolvimento backend com .NET.

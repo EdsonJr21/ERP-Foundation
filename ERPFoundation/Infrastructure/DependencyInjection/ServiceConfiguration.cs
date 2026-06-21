@@ -10,16 +10,24 @@ namespace ERPFoundation.Infrastructure.DependencyInjection;
 
 public static class ServiceConfiguration
 {
-    public static IServiceProvider Configure()
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        var services = new ServiceCollection();
-
         services.AddScoped<AppDbContext>();
 
         services.AddScoped<IProdutoRepository, ProdutoRepository>();
         services.AddScoped<IProdutoService, ProdutoService>();
+
         services.AddScoped<IFornecedorRepository, FornecedorRepository>();
         services.AddScoped<IFornecedorService, FornecedorService>();
+
+        return services;
+    }
+
+    public static IServiceProvider Configure()
+    {
+        var services = new ServiceCollection();
+
+        services.AddInfrastructure();
 
         services.AddScoped<MainMenu>();
         services.AddScoped<ProdutoMenu>();
