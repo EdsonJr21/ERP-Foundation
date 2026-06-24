@@ -1,16 +1,16 @@
-﻿using ERPFoundation.Domain.Models;
+using ERPFoundation.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPFoundation.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
-    public DbSet<Produto> Produtos { get; set; }
-    public DbSet<Fornecedor> Fornecedores { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // quando for usar tem que ajustar a senha localmente antes de executar
+        // Adjust the local password before running the application.
         const string connectionString = "Server=localhost;Database=erpfoundation;User=root;Password=;";
 
         optionsBuilder.UseMySql(

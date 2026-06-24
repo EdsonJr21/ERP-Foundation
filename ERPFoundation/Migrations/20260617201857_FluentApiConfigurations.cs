@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -12,7 +12,7 @@ namespace ERPFoundation.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Sku",
-                table: "Produtos",
+                table: "Products",
                 type: "varchar(50)",
                 maxLength: 50,
                 nullable: false,
@@ -22,16 +22,16 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<decimal>(
-                name: "Preco",
-                table: "Produtos",
+                name: "Price",
+                table: "Products",
                 type: "decimal(10,2)",
                 nullable: false,
                 oldClrType: typeof(double),
                 oldType: "double");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Nome",
-                table: "Produtos",
+                name: "Name",
+                table: "Products",
                 type: "varchar(100)",
                 maxLength: 100,
                 nullable: false,
@@ -41,8 +41,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Nome",
-                table: "Fornecedores",
+                name: "Name",
+                table: "Suppliers",
                 type: "varchar(100)",
                 maxLength: 100,
                 nullable: false,
@@ -52,8 +52,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Endereco",
-                table: "Fornecedores",
+                name: "Address",
+                table: "Suppliers",
                 type: "varchar(200)",
                 maxLength: 200,
                 nullable: false,
@@ -63,8 +63,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Cnpj",
-                table: "Fornecedores",
+                name: "TaxId",
+                table: "Suppliers",
                 type: "varchar(18)",
                 maxLength: 18,
                 nullable: false,
@@ -79,7 +79,7 @@ namespace ERPFoundation.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Sku",
-                table: "Produtos",
+                table: "Products",
                 type: "longtext",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -89,16 +89,16 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<double>(
-                name: "Preco",
-                table: "Produtos",
+                name: "Price",
+                table: "Products",
                 type: "double",
                 nullable: false,
                 oldClrType: typeof(decimal),
                 oldType: "decimal(10,2)");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Nome",
-                table: "Produtos",
+                name: "Name",
+                table: "Products",
                 type: "longtext",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -108,8 +108,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Nome",
-                table: "Fornecedores",
+                name: "Name",
+                table: "Suppliers",
                 type: "longtext",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -119,8 +119,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Endereco",
-                table: "Fornecedores",
+                name: "Address",
+                table: "Suppliers",
                 type: "longtext",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -130,8 +130,8 @@ namespace ERPFoundation.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Cnpj",
-                table: "Fornecedores",
+                name: "TaxId",
+                table: "Suppliers",
                 type: "varchar(255)",
                 nullable: false,
                 oldClrType: typeof(string),

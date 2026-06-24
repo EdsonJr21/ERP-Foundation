@@ -10,6 +10,6 @@ class Program
     {
         var provider = ServiceConfiguration.Configure();
         var mainMenu = provider.GetRequiredService<MainMenu>();
-        await mainMenu.ExibirAsync();
+        await mainMenu.ShowAsync();
     }
 }

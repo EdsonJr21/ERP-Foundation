@@ -14,11 +14,11 @@ public static class ServiceConfiguration
     {
         services.AddScoped<AppDbContext>();
 
-        services.AddScoped<IProdutoRepository, ProdutoRepository>();
-        services.AddScoped<IProdutoService, ProdutoService>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductService, ProductService>();
 
-        services.AddScoped<IFornecedorRepository, FornecedorRepository>();
-        services.AddScoped<IFornecedorService, FornecedorService>();
+        services.AddScoped<ISupplierRepository, SupplierRepository>();
+        services.AddScoped<ISupplierService, SupplierService>();
 
         return services;
     }
@@ -30,8 +30,8 @@ public static class ServiceConfiguration
         services.AddInfrastructure();
 
         services.AddScoped<MainMenu>();
-        services.AddScoped<ProdutoMenu>();
-        services.AddScoped<FornecedorMenu>();
+        services.AddScoped<ProductMenu>();
+        services.AddScoped<SupplierMenu>();
 
         return services.BuildServiceProvider();
     }

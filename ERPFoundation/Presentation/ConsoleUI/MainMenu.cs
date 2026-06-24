@@ -1,42 +1,42 @@
-﻿namespace ERPFoundation.Presentation.ConsoleUI;
+namespace ERPFoundation.Presentation.ConsoleUI;
 
 public class MainMenu
 {
-    private readonly ProdutoMenu _produtoMenu;
-    private readonly FornecedorMenu _fornecedorMenu;
+    private readonly ProductMenu _productMenu;
+    private readonly SupplierMenu _supplierMenu;
 
-    public MainMenu(ProdutoMenu produtoMenu, FornecedorMenu fornecedorMenu)
+    public MainMenu(ProductMenu productMenu, SupplierMenu supplierMenu)
     {
-        _produtoMenu = produtoMenu;
-        _fornecedorMenu = fornecedorMenu;
+        _productMenu = productMenu;
+        _supplierMenu = supplierMenu;
     }
 
-    public async Task ExibirAsync()
+    public async Task ShowAsync()
     {
         while (true)
         {
             Console.Clear();
 
             Console.WriteLine("=== ERP Foundation ===");
-            Console.WriteLine("1 - Gerenciar Produtos");
-            Console.WriteLine("2 - Gerenciar Fornecedores");
-            Console.WriteLine("0 - Sair");
-            Console.Write("Digite uma opção: ");
+            Console.WriteLine("1 - Manage Products");
+            Console.WriteLine("2 - Manage Suppliers");
+            Console.WriteLine("0 - Exit");
+            Console.Write("Enter an option: ");
 
-            var opcao = Console.ReadLine() ?? "";
+            var option = Console.ReadLine() ?? "";
 
-            switch (opcao)
+            switch (option)
             {
                 case "1":
-                    await _produtoMenu.ExibirAsync();
+                    await _productMenu.ShowAsync();
                     break;
                 case "2":
-                    await _fornecedorMenu.ExibirAsync();
+                    await _supplierMenu.ShowAsync();
                     break;
                 case "0":
                     return;
                 default:
-                    Console.WriteLine("Opção inválida.");
+                    Console.WriteLine("Invalid option.");
                     Console.ReadKey();
                     break;
             }

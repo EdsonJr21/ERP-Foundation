@@ -1,6 +1,11 @@
-@ERPFoundation.API_HostAddress = http://localhost:5109
+@ERPFoundation_API_HostAddress = http://localhost:5109
 
-GET {{ERPFoundation.API_HostAddress}}/weatherforecast/
+GET {{ERPFoundation_API_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+GET {{ERPFoundation_API_HostAddress}}/api/suppliers
 Accept: application/json
 
 ###

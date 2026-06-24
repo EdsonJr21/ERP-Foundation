@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -15,70 +15,70 @@ namespace ERPFoundation.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Fornecedores",
+                name: "Suppliers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Cnpj = table.Column<string>(type: "varchar(255)", nullable: false)
+                    TaxId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Endereco = table.Column<string>(type: "longtext", nullable: false)
+                    Address = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fornecedores", x => x.Id);
+                    table.PrimaryKey("PK_Suppliers", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Produtos",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Sku = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Preco = table.Column<double>(type: "double", nullable: false),
-                    Quantidade = table.Column<int>(type: "int", nullable: false),
-                    FornecedorId = table.Column<int>(type: "int", nullable: false)
+                    Price = table.Column<double>(type: "double", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Produtos", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Produtos_Fornecedores_FornecedorId",
-                        column: x => x.FornecedorId,
-                        principalTable: "Fornecedores",
+                        name: "FK_Products_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fornecedores_Cnpj",
-                table: "Fornecedores",
-                column: "Cnpj",
+                name: "IX_Suppliers_TaxId",
+                table: "Suppliers",
+                column: "TaxId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Produtos_FornecedorId",
-                table: "Produtos",
-                column: "FornecedorId");
+                name: "IX_Products_SupplierId",
+                table: "Products",
+                column: "SupplierId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Produtos");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Fornecedores");
+                name: "Suppliers");
         }
     }
 }
