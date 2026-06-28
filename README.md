@@ -1,10 +1,8 @@
 # ERP Foundation
 
-## Sobre o Projeto
+Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity Framework Core** e **MySQL**, aplicando arquitetura em camadas, boas práticas e desenvolvimento de APIs REST.
 
-ERP Foundation é um projeto de estudos desenvolvido com **C#**, **.NET**, **Entity Framework Core** e **MySQL**, com foco em desenvolvimento backend, arquitetura de software e boas práticas de mercado.
-
-O projeto evolui gradualmente para uma base de ERP com gerenciamento de produtos e fornecedores por meio de uma aplicação em camadas e uma API REST.
+---
 
 ## Tecnologias
 
@@ -13,54 +11,33 @@ O projeto evolui gradualmente para uma base de ERP com gerenciamento de produtos
 * ASP.NET Core Web API
 * Entity Framework Core
 * MySQL
+* AutoMapper
 * LINQ
 * Git
 
-## Funcionalidades
-
-### Produtos
-
-* Cadastro
-* Consulta
-* Atualização
-* Remoção
-
-### Fornecedores
-
-* Cadastro
-* Consulta
-* Atualização
-* Remoção
+---
 
 ## Recursos Implementados
 
-* Relacionamento entre Produtos e Fornecedores
-* Data Annotations
-* Fluent API
-* Validação de regras de negócio
-* Persistência com Entity Framework Core
-* Operações assíncronas com Async/Await
-* Consultas com LINQ
+* CRUD de Produtos
+* CRUD de Fornecedores
 * API REST
 * DTOs
-
-## Arquitetura
-
-### Camadas
-
-* Domain
-* Application
-* Infrastructure
-* Presentation
-* API
-
-### Padrões
-
+* AutoMapper
 * Repository Pattern
 * Service Layer
 * Dependency Injection
+* Entity Framework Core + MySQL
+* Migrations
+* Data Annotations
+* Fluent API
+* Relacionamento entre Produtos e Fornecedores
+* Async/Await
+* LINQ
 
-## Estrutura do Projeto
+---
+
+## Estrutura
 
 ```text
 ERP-Foundation
@@ -69,71 +46,44 @@ ERP-Foundation
 │   ├── Domain
 │   ├── Infrastructure
 │   ├── Migrations
-│   ├── Presentation
-│   └── Program.cs
+│   └── Presentation
+│
 ├── ERPFoundation.API
 │   ├── Controllers
 │   ├── DTOs
-│   └── Program.cs
-├── ERP-Foundation.sln
-└── README.md
+│   └── Mappings
+│
+└── ERP-Foundation.sln
 ```
 
-## Como Executar
+---
 
-### Clonar o repositório
+## Executar
 
 ```bash
 git clone https://github.com/EdsonJr21/ERP-Foundation.git
-```
 
-### Restaurar dependências
-
-```bash
 dotnet restore
-```
 
-### Aplicar migrations
-
-```bash
 dotnet ef database update --project ERPFoundation
-```
 
-### Executar a API
-
-```bash
 dotnet run --project ERPFoundation.API
 ```
 
-## Status Atual
+---
 
-### Concluído
+## Roadmap
 
-* CRUD de Produtos
-* CRUD de Fornecedores
-* Entity Framework Core + MySQL
-* Migrations
-* LINQ
-* Async/Await
-* Data Annotations
-* Fluent API
-* API REST
-* DTOs
-* Arquitetura em camadas
-
-### Próximos Passos
-
-* AutoMapper
 * Tratamento global de exceções
 * FluentValidation
-* JWT
-* Testes unitários
-* Testes de integração
-* Docker
-* CI/CD
+* Testes Unitários
+* Testes de Integração
+* Autenticação e Autorização (JWT)
 * Clientes
 * Pedidos
+* Docker
+* CI/CD
 
-## Autor
+---
 
-Desenvolvido por **Edson Jr.** para estudos de desenvolvimento backend com .NET.
+**Desenvolvido por Edson Jr.**
