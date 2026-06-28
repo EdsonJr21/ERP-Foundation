@@ -1,6 +1,6 @@
 namespace ERPFoundation.API.DTOs.Suppliers;
 
-public record SupplierDto(
+public record SupplierResponseDto(
     int Id,
     string Name,
     string TaxId,

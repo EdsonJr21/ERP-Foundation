@@ -1,3 +1,4 @@
+using AutoMapper;
 using ERPFoundation.API.DTOs.Products;
 using ERPFoundation.Application.Services.Interfaces;
 using ERPFoundation.Domain.Models;
@@ -10,10 +11,12 @@ namespace ERPFoundation.API.Controllers.Products;
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
+    private readonly IMapper _mapper;
 
-    public ProductsController(IProductService productService)
+    public ProductsController(IProductService productService, IMapper mapper)
     {
         _productService = productService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -21,14 +24,7 @@ public class ProductsController : ControllerBase
     {
         var products = await _productService.ListProductsAsync();
 
-        var productsDto = products.Select(p => new ProductDto(
-            p.Id,
-            p.Name,
-            p.Sku,
-            p.Price,
-            p.Quantity,
-            p.SupplierId
-        ));
+        var productsDto = _mapper.Map<List<ProductResponseDto>>(products);
 
         return Ok(productsDto);
     }
@@ -43,14 +39,7 @@ public class ProductsController : ControllerBase
             return NotFound("Product not found.");
         }
 
-        var productDto = new ProductDto(
-            product.Id,
-            product.Name,
-            product.Sku,
-            product.Price,
-            product.Quantity,
-            product.SupplierId
-        );
+        var productDto = _mapper.Map<ProductResponseDto>(product);
 
         return Ok(productDto);
     }
@@ -58,14 +47,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
     {
-        var product = new Product
-        {
-            Name = dto.Name,
-            Sku = dto.Sku,
-            Price = dto.Price,
-            Quantity = dto.Quantity,
-            SupplierId = dto.SupplierId
-        };
+        var product = _mapper.Map<Product>(dto);
 
         var result = await _productService.CreateProductAsync(product);
 
@@ -74,14 +56,7 @@ public class ProductsController : ControllerBase
             return BadRequest("Invalid data, SKU already registered, or invalid supplier.");
         }
 
-        var productDto = new ProductDto(
-            product.Id,
-            product.Name,
-            product.Sku,
-            product.Price,
-            product.Quantity,
-            product.SupplierId
-        );
+        var productDto = _mapper.Map<ProductResponseDto>(product);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -100,11 +75,7 @@ public class ProductsController : ControllerBase
             return NotFound("Product not found.");
         }
 
-        product.Name = dto.Name;
-        product.Sku = dto.Sku;
-        product.Price = dto.Price;
-        product.Quantity = dto.Quantity;
-        product.SupplierId = dto.SupplierId;
+        _mapper.Map(dto, product);
 
         var result = await _productService.UpdateProductsAsync(product);
 

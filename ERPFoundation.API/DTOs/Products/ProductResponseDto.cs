@@ -1,6 +1,6 @@
 namespace ERPFoundation.API.DTOs.Products;
 
-public record ProductDto(
+public record ProductResponseDto(
     int Id,
     string Name,
     string Sku,

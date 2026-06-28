@@ -4,15 +4,24 @@ using ERPFoundation.Infrastructure.Data;
 using ERPFoundation.Infrastructure.Repositories;
 using ERPFoundation.Infrastructure.Repositories.Interfaces;
 using ERPFoundation.Presentation.ConsoleUI;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ERPFoundation.Infrastructure.DependencyInjection;
 
 public static class ServiceConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        services.AddScoped<AppDbContext>();
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString)
+            ));
 
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
@@ -27,7 +36,18 @@ public static class ServiceConfiguration
     {
         var services = new ServiceCollection();
 
-        services.AddInfrastructure();
+        const string connectionString = "Server=localhost;Database=erpfoundation;User=root;Password=;";
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString)));
+
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductService, ProductService>();
+
+        services.AddScoped<ISupplierRepository, SupplierRepository>();
+        services.AddScoped<ISupplierService, SupplierService>();
 
         services.AddScoped<MainMenu>();
         services.AddScoped<ProductMenu>();

@@ -1,3 +1,4 @@
+using AutoMapper;
 using ERPFoundation.API.DTOs.Suppliers;
 using ERPFoundation.Application.Services.Interfaces;
 using ERPFoundation.Domain.Models;
@@ -10,10 +11,12 @@ namespace ERPFoundation.API.Controllers.Suppliers;
 public class SuppliersController : ControllerBase
 {
     private readonly ISupplierService _supplierService;
+    private readonly IMapper _mapper;
 
-    public SuppliersController(ISupplierService supplierService)
+    public SuppliersController(ISupplierService supplierService, IMapper mapper)
     {
         _supplierService = supplierService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -21,12 +24,7 @@ public class SuppliersController : ControllerBase
     {
         var suppliers = await _supplierService.ListSuppliersAsync();
 
-        var suppliersDto = suppliers.Select(s => new SupplierDto(
-            s.Id,
-            s.Name,
-            s.TaxId,
-            s.Address
-        ));
+        var suppliersDto = _mapper.Map<List<SupplierResponseDto>>(suppliers);
 
         return Ok(suppliersDto);
     }
@@ -41,12 +39,7 @@ public class SuppliersController : ControllerBase
             return NotFound("Supplier not found.");
         }
 
-        var supplierDto = new SupplierDto(
-            supplier.Id,
-            supplier.Name,
-            supplier.TaxId,
-            supplier.Address
-        );
+        var supplierDto = _mapper.Map<SupplierResponseDto>(supplier);
 
         return Ok(supplierDto);
     }
@@ -54,12 +47,7 @@ public class SuppliersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateSupplierDto dto)
     {
-        var supplier = new Supplier
-        {
-            Name = dto.Name,
-            TaxId = dto.TaxId,
-            Address = dto.Address
-        };
+        var supplier = _mapper.Map<Supplier>(dto);
 
         var result = await _supplierService.AddSupplierAsync(supplier);
 
@@ -68,12 +56,7 @@ public class SuppliersController : ControllerBase
             return BadRequest("Invalid data or supplier already registered.");
         }
 
-        var supplierDto = new SupplierDto(
-            supplier.Id,
-            supplier.Name,
-            supplier.TaxId,
-            supplier.Address
-        );
+        var supplierDto = _mapper.Map<SupplierResponseDto>(supplier);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -92,9 +75,7 @@ public class SuppliersController : ControllerBase
             return NotFound("Supplier not found.");
         }
 
-        existingSupplier.Name = dto.Name;
-        existingSupplier.TaxId = dto.TaxId;
-        existingSupplier.Address = dto.Address;
+        _mapper.Map(dto, existingSupplier);
 
         var result = await _supplierService.UpdateSupplierAsync(existingSupplier);
 
