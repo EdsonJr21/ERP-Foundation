@@ -18,97 +18,43 @@ public class SupplierRepository : ISupplierRepository
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
-        try
-        {
-            await _context.Suppliers.AddAsync(supplier);
+        await _context.Suppliers.AddAsync(supplier);
 
-            return await _context.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            throw new ApplicationException("Error adding supplier to the database.", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error adding supplier.", ex);
-        }
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<List<Supplier>> ListSuppliersAsync()
     {
-        try
-        {
-            return await _context.Suppliers.ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error listing suppliers.", ex);
-        }
+        return await _context.Suppliers.ToListAsync();
     }
 
     public async Task<Supplier?> GetByIdAsync(int id)
     {
-        try
-        {
-            return await _context.Suppliers
-                .FirstOrDefaultAsync(f => f.Id == id);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error searching supplier by ID.", ex);
-        }
+        return await _context.Suppliers
+            .FirstOrDefaultAsync(f => f.Id == id);
     }
 
     public async Task<Supplier?> GetByTaxIdAsync(string taxId)
     {
-        try
-        {
-            return await _context.Suppliers
-                .FirstOrDefaultAsync(f => f.TaxId == taxId);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error searching supplier by Tax ID.", ex);
-        }
+        return await _context.Suppliers
+            .FirstOrDefaultAsync(f => f.TaxId == taxId);
     }
 
     public async Task<bool> UpdateSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
-        try
-        {
-            _context.Suppliers.Update(supplier);
+        _context.Suppliers.Update(supplier);
 
-            return await _context.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            throw new ApplicationException("Error updating supplier in the database.", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error updating supplier.", ex);
-        }
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> RemoveSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
-        try
-        {
-            _context.Suppliers.Remove(supplier);
+        _context.Suppliers.Remove(supplier);
 
-            return await _context.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            throw new ApplicationException("Error removing supplier from the database.", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Error removing supplier.", ex);
-        }
+        return await _context.SaveChangesAsync() > 0;
     }
 }

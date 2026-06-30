@@ -27,6 +27,8 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 * Repository Pattern
 * Service Layer
 * Dependency Injection
+* Middleware Global de Exceções
+* Respostas de Erro Padronizadas
 * Entity Framework Core + MySQL
 * Migrations
 * Data Annotations
@@ -51,7 +53,9 @@ ERP-Foundation
 ├── ERPFoundation.API
 │   ├── Controllers
 │   ├── DTOs
-│   └── Mappings
+│   ├── Middlewares
+│   ├── Mappings
+│   └── Responses
 │
 └── ERP-Foundation.sln
 ```
@@ -74,13 +78,14 @@ dotnet run --project ERPFoundation.API
 
 ## Roadmap
 
-* Tratamento global de exceções
 * FluentValidation
 * Testes Unitários
 * Testes de Integração
 * Autenticação e Autorização (JWT)
 * Clientes
 * Pedidos
+* Razor
+* Blazor
 * Docker
 * CI/CD
 
