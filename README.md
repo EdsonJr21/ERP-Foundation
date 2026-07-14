@@ -63,11 +63,10 @@ ERP-Foundation
 │   ├── Responses  
 │   └── Validators  
 │  
-├── ERPFoundation.Tests  
-│   ├── Application  
-│   ├── Builders  
-│   └── Unit Tests  
-│  
+├── ERPFoundation.Tests
+│   ├── Application
+│   ├── Builders
+│
 └── ERP-Foundation.sln
 
 ---
