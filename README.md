@@ -46,26 +46,26 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 ## Estrutura
 
 ERP-Foundation
-
-├── ERPFoundation  
-│   ├── Application  
-│   ├── Domain  
-│   ├── Infrastructure  
-│   ├── Migrations  
-│   └── Presentation  
-│  
-├── ERPFoundation.API  
-│   ├── Controllers  
-│   ├── DTOs  
-│   ├── Filters  
-│   ├── Middlewares  
-│   ├── Mappings  
-│   ├── Responses  
-│   └── Validators  
-│  
+│
+├── ERPFoundation
+│   ├── Application
+│   ├── Domain
+│   ├── Infrastructure
+│   ├── Migrations
+│   └── Presentation
+│
+├── ERPFoundation.API
+│   ├── Controllers
+│   ├── DTOs
+│   ├── Filters
+│   ├── Middlewares
+│   ├── Mappings
+│   ├── Responses
+│   └── Validators
+│
 ├── ERPFoundation.Tests
 │   ├── Application
-│   ├── Builders
+│   └── Builders
 │
 └── ERP-Foundation.sln
 
