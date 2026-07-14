@@ -5,32 +5,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPFoundation.Infrastructure.Repositories;
 
-public class ProductRepository : IProductRepository
+public class ProductRepository(AppDbContext context) : IProductRepository
 {
-    private readonly AppDbContext _context;
-
-    public ProductRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<bool> AddProductsAsync(Product product)
     {
-        if (product == null) throw new ArgumentNullException(nameof(product));
+        ArgumentNullException.ThrowIfNull(product);
 
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
+        context.Products.Add(product);
+        await context.SaveChangesAsync();
         return true;
     }
 
     public async Task<List<Product>> ListProductsAsync()
     {
-        return await ApplyDefaultOrdering(_context.Products).ToListAsync();
+        return await ApplyDefaultOrdering(context.Products).ToListAsync();
     }
 
     public async Task<List<Product>> SearchProductsAsync(string name)
     {
-        var query = _context.Products.AsQueryable();
+        var query = context.Products.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(name))
         {
@@ -45,33 +38,22 @@ public class ProductRepository : IProductRepository
     {
         ArgumentNullException.ThrowIfNull(product);
 
-        var existingProduct = await _context.Products.FindAsync(product.Id);
-        if (existingProduct == null)
-        {
-            return false;
-        }
+        context.Products.Update(product);
 
-        existingProduct.Name = product.Name;
-        existingProduct.Sku = product.Sku;
-        existingProduct.Price = product.Price;
-        existingProduct.Quantity = product.Quantity;
-        existingProduct.SupplierId = product.SupplierId;
-
-        await _context.SaveChangesAsync();
-        return true;
+        return await context.SaveChangesAsync() > 0;
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        return await _context.Products.FindAsync(id);
+        return await context.Products.FindAsync(id);
     }
 
     public async Task<bool> RemoveProductsAsync(Product product)
     {
         if (product == null) throw new ArgumentNullException(nameof(product));
 
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
+        context.Products.Remove(product);
+        await context.SaveChangesAsync();
         return true;
     }
 
@@ -83,18 +65,20 @@ public class ProductRepository : IProductRepository
             .ThenBy(p => p.Price);
     }
 
-    public async Task<bool> ExistsSkuAsync(string sku)
+    public async Task<bool> ExistsSkuAsync(string sku, int? productId = null)
     {
         if (string.IsNullOrWhiteSpace(sku)) return false;
 
         var skuNormalized = sku.Trim().ToUpperInvariant();
-        return await _context.Products.AnyAsync(p => EF.Functions.Like(p.Sku, skuNormalized));
+
+        return await context.Products.AnyAsync(p =>
+            p.Sku == skuNormalized && (!productId.HasValue || p.Id != productId.Value));
     }
 
     public async Task<bool> ExistsSupplierAsync(int supplierId)
     {
         if (supplierId <= 0) return false;
 
-        return await _context.Suppliers.AnyAsync(f => f.Id == supplierId);
+        return await context.Suppliers.AnyAsync(f => f.Id == supplierId);
     }
 }

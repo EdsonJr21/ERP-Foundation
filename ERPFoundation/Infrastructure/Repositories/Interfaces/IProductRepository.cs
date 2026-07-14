@@ -13,6 +13,6 @@ public interface IProductRepository
     Task<Product?> GetByIdAsync(int id);
 
     Task<bool> RemoveProductsAsync(Product product);
-    Task<bool> ExistsSkuAsync(string sku);
+    Task<bool> ExistsSkuAsync(string sku, int? productId = null);
     Task<bool> ExistsSupplierAsync(int supplierId);
 }

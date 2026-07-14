@@ -1,29 +1,29 @@
 ﻿using System.Net;
-using System.Text.Json;
 using ERPFoundation.API.Responses;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPFoundation.API.Middlewares;
 
-public class ExceptionHandlingMiddleware
+public class ExceptionHandlingMiddleware(
+    RequestDelegate next,
+    IWebHostEnvironment environment,
+    ILogger<ExceptionHandlingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly IWebHostEnvironment _environment;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next, IWebHostEnvironment environment)
-    {
-        _next = next;
-        _environment = environment;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
+            if (context.Response.HasStarted)
+            {
+                logger.LogWarning(ex, "The response has already started; the exception cannot be handled.");
+                throw;
+            }
+
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -32,7 +32,7 @@ public class ExceptionHandlingMiddleware
     {
         var statusCode = exception switch
         {
-            ArgumentException => HttpStatusCode.BadRequest,
+            ValidationException or ArgumentException => HttpStatusCode.BadRequest,
             KeyNotFoundException => HttpStatusCode.NotFound,
             DbUpdateException => HttpStatusCode.Conflict,
             _ => HttpStatusCode.InternalServerError
@@ -40,25 +40,51 @@ public class ExceptionHandlingMiddleware
 
         var message = exception switch
         {
-            ArgumentException => "Invalid request data.",
-            KeyNotFoundException => "Resource not found.",
+            ValidationException => "Validation error.",
+            ArgumentException or KeyNotFoundException => exception.Message,
             DbUpdateException => "Database update error.",
             _ => "An internal server error occurred."
         };
 
+        if (statusCode == HttpStatusCode.InternalServerError)
+        {
+            logger.LogError(exception, "An unhandled exception occurred while processing {Method} {Path}.",
+                context.Request.Method,
+                context.Request.Path);
+        }
+        else
+        {
+            logger.LogWarning(exception, "Request {Method} {Path} failed with status code {StatusCode}.",
+                context.Request.Method,
+                context.Request.Path,
+                (int)statusCode);
+        }
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
+
+        Dictionary<string, string[]>? errors = null;
+
+        if (exception is ValidationException validationException)
+        {
+            errors = validationException.Errors
+                .GroupBy(error => error.PropertyName)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(error => error.ErrorMessage).ToArray()
+                );
+        }
 
         var response = new ErrorResponse
         {
             StatusCode = context.Response.StatusCode,
             Message = message,
-            Detail = _environment.IsDevelopment()
+            Detail = environment.IsDevelopment()
                 ? exception.Message
-                : null
+                : null,
+            Errors = errors
         };
 
-        var json = JsonSerializer.Serialize(response);
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsJsonAsync(response);
     }
 }

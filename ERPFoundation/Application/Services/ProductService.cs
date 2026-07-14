@@ -18,17 +18,7 @@ public class ProductService : IProductService
     {
         ArgumentNullException.ThrowIfNull(product);
 
-        if (string.IsNullOrWhiteSpace(product.Name) ||
-            string.IsNullOrWhiteSpace(product.Sku) ||
-            product.Price <= 0 ||
-            product.Quantity < 0 ||
-            product.SupplierId <= 0)
-        {
-            return false;
-        }
-
-        product.Sku = product.Sku.Trim().ToUpperInvariant();
-        product.Name = product.Name.Trim();
+        NormalizeProduct(product);
 
         if (await _productRepository.ExistsSkuAsync(product.Sku))
         {
@@ -43,7 +33,6 @@ public class ProductService : IProductService
         return await _productRepository.AddProductsAsync(product);
     }
 
-
     public async Task<List<Product>> ListProductsAsync()
     {
         return await _productRepository.ListProductsAsync();
@@ -56,12 +45,15 @@ public class ProductService : IProductService
             return new List<Product>();
         }
 
-        return await _productRepository.SearchProductsAsync(name);
+        return await _productRepository.SearchProductsAsync(name.Trim());
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        if (id <= 0) return null;
+        if (id <= 0)
+        {
+            return null;
+        }
 
         return await _productRepository.GetByIdAsync(id);
     }
@@ -70,36 +62,64 @@ public class ProductService : IProductService
     {
         ArgumentNullException.ThrowIfNull(product);
 
-        if (product.Id <= 0 ||
-            string.IsNullOrWhiteSpace(product.Name) ||
-            string.IsNullOrWhiteSpace(product.Sku) ||
-            product.Price <= 0 ||
-            product.Quantity < 0 ||
-            product.SupplierId <= 0)
+        if (product.Id <= 0)
+        {
+            return false;
+        }
+        
+        NormalizeProduct(product);
+        
+        var existingProduct = await _productRepository.GetByIdAsync(product.Id);
+
+        if (existingProduct is null)
         {
             return false;
         }
 
-        product.Name = product.Name.Trim();
-        product.Sku = product.Sku.Trim().ToUpperInvariant();
+        if (await _productRepository.ExistsSkuAsync(product.Sku, product.Id))
+        {
+            return false;
+        }
 
         if (!await _productRepository.ExistsSupplierAsync(product.SupplierId))
         {
             return false;
         }
 
-        return await _productRepository.UpdateProductsAsync(product);
+        existingProduct.Name = product.Name;
+        existingProduct.Sku = product.Sku;
+        existingProduct.Price = product.Price;
+        existingProduct.Quantity = product.Quantity;
+        existingProduct.SupplierId = product.SupplierId;
+
+        return await _productRepository.UpdateProductsAsync(existingProduct);
     }
 
     public async Task<bool> RemoveProductsAsync(int id)
     {
-        if (id <= 0) return false;
+        if (id <= 0)
+        {
+            return false;
+        }
 
         var product = await _productRepository.GetByIdAsync(id);
 
-        if (product == null) return false;
-        if (product.Quantity > 0) return false;
+        if (product is null)
+        {
+            return false;
+        }
+
+        if (product.Quantity > 0)
+        {
+            return false;
+        }
 
         return await _productRepository.RemoveProductsAsync(product);
+    }
+
+    private static void NormalizeProduct(Product product)
+    {
+        product.Name = product.Name.Trim();
+        product.Sku = product.Sku.Trim().ToUpperInvariant();
     }
 }
