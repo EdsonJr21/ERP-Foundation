@@ -43,36 +43,9 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 
 ---
 
-## Estrutura
-
-ERP-Foundation
-│
-├── ERPFoundation
-│   ├── Application
-│   ├── Domain
-│   ├── Infrastructure
-│   ├── Migrations
-│   └── Presentation
-│
-├── ERPFoundation.API
-│   ├── Controllers
-│   ├── DTOs
-│   ├── Filters
-│   ├── Middlewares
-│   ├── Mappings
-│   ├── Responses
-│   └── Validators
-│
-├── ERPFoundation.Tests
-│   ├── Application
-│   └── Builders
-│
-└── ERP-Foundation.sln
-
----
-
 ## Executar
 
+```bash
 git clone https://github.com/EdsonJr21/ERP-Foundation.git
 
 dotnet restore
@@ -80,6 +53,7 @@ dotnet restore
 dotnet ef database update --project ERPFoundation
 
 dotnet run --project ERPFoundation.API
+```
 
 ---
 
