@@ -1,6 +1,6 @@
 # ERP Foundation
 
-Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity Framework Core** e **MySQL**, aplicando arquitetura em camadas, boas práticas e desenvolvimento de APIs REST.
+Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity Framework Core** e **MySQL**, aplicando arquitetura em camadas, boas práticas, API REST e testes automatizados.
 
 ---
 
@@ -12,6 +12,9 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 * Entity Framework Core
 * MySQL
 * AutoMapper
+* FluentValidation
+* xUnit
+* Moq
 * LINQ
 * Git
 
@@ -28,11 +31,12 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 * Service Layer
 * Dependency Injection
 * Middleware Global de Exceções
-* Respostas de Erro Padronizadas
+* FluentValidation
+* Testes Unitários
 * Entity Framework Core + MySQL
 * Migrations
-* Data Annotations
 * Fluent API
+* Data Annotations
 * Relacionamento entre Produtos e Fornecedores
 * Async/Await
 * LINQ
@@ -41,30 +45,35 @@ Projeto desenvolvido para estudo de **C#**, **.NET**, **ASP.NET Core**, **Entity
 
 ## Estrutura
 
-```text
 ERP-Foundation
-├── ERPFoundation
-│   ├── Application
-│   ├── Domain
-│   ├── Infrastructure
-│   ├── Migrations
-│   └── Presentation
-│
-├── ERPFoundation.API
-│   ├── Controllers
-│   ├── DTOs
-│   ├── Middlewares
-│   ├── Mappings
-│   └── Responses
-│
+
+├── ERPFoundation  
+│   ├── Application  
+│   ├── Domain  
+│   ├── Infrastructure  
+│   ├── Migrations  
+│   └── Presentation  
+│  
+├── ERPFoundation.API  
+│   ├── Controllers  
+│   ├── DTOs  
+│   ├── Filters  
+│   ├── Middlewares  
+│   ├── Mappings  
+│   ├── Responses  
+│   └── Validators  
+│  
+├── ERPFoundation.Tests  
+│   ├── Application  
+│   ├── Builders  
+│   └── Unit Tests  
+│  
 └── ERP-Foundation.sln
-```
 
 ---
 
 ## Executar
 
-```bash
 git clone https://github.com/EdsonJr21/ERP-Foundation.git
 
 dotnet restore
@@ -72,20 +81,16 @@ dotnet restore
 dotnet ef database update --project ERPFoundation
 
 dotnet run --project ERPFoundation.API
-```
 
 ---
 
 ## Roadmap
 
-* FluentValidation
-* Testes Unitários
 * Testes de Integração
+* Arquitetura de Monólito Modular
 * Autenticação e Autorização (JWT)
 * Clientes
 * Pedidos
-* Razor
-* Blazor
 * Docker
 * CI/CD
 
