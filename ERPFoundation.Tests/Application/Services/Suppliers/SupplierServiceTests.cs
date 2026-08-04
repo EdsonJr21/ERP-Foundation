@@ -1,3 +1,4 @@
+using ERPFoundation.Domain.Exceptions;
 using ERPFoundation.Domain.Models;
 using ERPFoundation.Tests.Builders;
 using Moq;
@@ -7,7 +8,7 @@ namespace ERPFoundation.Tests.Application.Services.Suppliers;
 public class SupplierServiceTests : SupplierServiceTestsBase
 {
     [Fact]
-    public async Task AddSupplierAsync_WhenSupplierIsValid_ShouldReturnTrue()
+    public async Task AddSupplierAsync_WhenSupplierIsValid_ShouldAddSuccessfully()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
@@ -19,11 +20,9 @@ public class SupplierServiceTests : SupplierServiceTestsBase
 
         SupplierRepositoryMock
             .Setup(r => r.AddSupplierAsync(supplier))
-            .ReturnsAsync(true);
+            .Returns(Task.CompletedTask);
 
-        var result = await SupplierService.AddSupplierAsync(supplier);
-
-        Assert.True(result);
+        await SupplierService.AddSupplierAsync(supplier);
 
         SupplierRepositoryMock.Verify(
             r => r.AddSupplierAsync(supplier),
@@ -31,7 +30,7 @@ public class SupplierServiceTests : SupplierServiceTestsBase
     }
 
     [Fact]
-    public async Task AddSupplierAsync_WhenSupplierHasSpaces_ShouldNormalizeSupplierAndReturnTrue()
+    public async Task AddSupplierAsync_WhenSupplierHasSpaces_ShouldNormalizeSupplier()
     {
         var supplier = new SupplierBuilder()
             .WithName("  Microsoft  ")
@@ -45,12 +44,10 @@ public class SupplierServiceTests : SupplierServiceTestsBase
 
         SupplierRepositoryMock
             .Setup(r => r.AddSupplierAsync(supplier))
-            .ReturnsAsync(true);
+            .Returns(Task.CompletedTask);
 
-        var result = await SupplierService.AddSupplierAsync(supplier);
+        await SupplierService.AddSupplierAsync(supplier);
 
-        Assert.True(result);
-        
         SupplierRepositoryMock.Verify(r =>
                 r.AddSupplierAsync(It.Is<Supplier>(s =>
                     s.Name == "Microsoft" &&
@@ -60,9 +57,8 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             Times.Once);
     }
 
-
     [Fact]
-    public async Task AddSupplierAsync_WhenTaxIdAlreadyExists_ShouldReturnFalse()
+    public async Task AddSupplierAsync_WhenTaxIdAlreadyExists_ShouldThrowDomainException()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
@@ -72,15 +68,12 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             .Setup(r => r.GetByTaxIdAsync(supplier.TaxId))
             .ReturnsAsync(supplier);
 
-        var result = await SupplierService.AddSupplierAsync(supplier);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.AddSupplierAsync(supplier));
 
         SupplierRepositoryMock.Verify(
             r => r.AddSupplierAsync(It.IsAny<Supplier>()),
             Times.Never);
     }
-
 
     [Fact]
     public async Task ListSuppliersAsync_WhenSuppliersExist_ShouldReturnSupplierList()
@@ -109,7 +102,6 @@ public class SupplierServiceTests : SupplierServiceTestsBase
         Assert.Equal(suppliers, result);
     }
 
-
     [Fact]
     public async Task GetByIdAsync_WhenSupplierExists_ShouldReturnSupplier()
     {
@@ -127,18 +119,32 @@ public class SupplierServiceTests : SupplierServiceTestsBase
         Assert.Equal(supplier, result);
     }
 
-
     [Fact]
-    public async Task GetByIdAsync_WhenIdIsInvalid_ShouldReturnNull()
+    public async Task GetByIdAsync_WhenIdIsInvalid_ShouldThrowDomainException()
     {
-        var result = await SupplierService.GetByIdAsync(0);
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.GetByIdAsync(0));
 
-        Assert.Null(result);
+        SupplierRepositoryMock.Verify(
+            r => r.GetByIdAsync(It.IsAny<int>()),
+            Times.Never);
     }
 
+    [Fact]
+    public async Task GetByIdAsync_WhenSupplierDoesNotExist_ShouldThrowNotFoundException()
+    {
+        const int nonExistentSupplierId = 99;
+
+        SupplierRepositoryMock
+            .Setup(r => r.GetByIdAsync(nonExistentSupplierId))
+            .ReturnsAsync((Supplier?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => SupplierService.GetByIdAsync(nonExistentSupplierId));
+
+        SupplierRepositoryMock.Verify(r => r.GetByIdAsync(nonExistentSupplierId), Times.Once);
+    }
 
     [Fact]
-    public async Task UpdateSupplierAsync_WhenSupplierIsValid_ShouldReturnTrue()
+    public async Task UpdateSupplierAsync_WhenSupplierIsValid_ShouldUpdateSuccessfully()
     {
         var supplierUpdate = new SupplierBuilder()
             .WithValidData()
@@ -150,10 +156,9 @@ public class SupplierServiceTests : SupplierServiceTestsBase
         var existingSupplier = new SupplierBuilder()
             .WithValidData()
             .WithName("Old Supplier")
-            .WithTaxId("22222222222222")
+            .WithTaxId("11111111111111")
             .WithAddress("Old Address")
             .Build();
-
 
         SupplierRepositoryMock
             .Setup(r => r.GetByTaxIdAsync(supplierUpdate.TaxId))
@@ -165,11 +170,10 @@ public class SupplierServiceTests : SupplierServiceTestsBase
 
         SupplierRepositoryMock
             .Setup(r => r.UpdateSupplierAsync(existingSupplier))
-            .ReturnsAsync(true);
+            .Returns(Task.CompletedTask);
 
-        var result = await SupplierService.UpdateSupplierAsync(supplierUpdate);
+        await SupplierService.UpdateSupplierAsync(supplierUpdate);
 
-        Assert.True(result);
         Assert.Equal(supplierUpdate.Name, existingSupplier.Name);
         Assert.Equal(supplierUpdate.TaxId, existingSupplier.TaxId);
         Assert.Equal(supplierUpdate.Address, existingSupplier.Address);
@@ -180,7 +184,7 @@ public class SupplierServiceTests : SupplierServiceTestsBase
     }
 
     [Fact]
-    public async Task UpdateSupplierAsync_WhenTaxIdBelongsToSameSupplier_ShouldReturnTrue()
+    public async Task UpdateSupplierAsync_WhenTaxIdBelongsToSameSupplier_ShouldUpdateSuccessfully()
     {
         var supplierUpdate = new SupplierBuilder()
             .WithValidData()
@@ -202,26 +206,50 @@ public class SupplierServiceTests : SupplierServiceTestsBase
 
         SupplierRepositoryMock
             .Setup(r => r.UpdateSupplierAsync(existingSupplier))
-            .ReturnsAsync(true);
+            .Returns(Task.CompletedTask);
 
-        var result = await SupplierService.UpdateSupplierAsync(supplierUpdate);
+        await SupplierService.UpdateSupplierAsync(supplierUpdate);
 
-        Assert.True(result);
         Assert.Equal("Updated Supplier", existingSupplier.Name);
     }
 
+    [Fact]
+    public async Task UpdateSupplierAsync_WhenTaxIdIsChanged_ShouldThrowDomainException()
+    {
+        var supplierUpdate = new SupplierBuilder()
+            .WithValidData()
+            .WithTaxId("11111111111111")
+            .Build();
+
+        var existingSupplier = new SupplierBuilder()
+            .WithValidData()
+            .WithTaxId("22222222222222")
+            .Build();
+
+        SupplierRepositoryMock
+            .Setup(r => r.GetByTaxIdAsync(supplierUpdate.TaxId))
+            .ReturnsAsync((Supplier?)null);
+
+        SupplierRepositoryMock
+            .Setup(r => r.GetByIdAsync(supplierUpdate.Id))
+            .ReturnsAsync(existingSupplier);
+
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.UpdateSupplierAsync(supplierUpdate));
+
+        SupplierRepositoryMock.Verify(
+            r => r.UpdateSupplierAsync(It.IsAny<Supplier>()),
+            Times.Never);
+    }
 
     [Fact]
-    public async Task UpdateSupplierAsync_WhenSupplierIdIsInvalid_ShouldReturnFalse()
+    public async Task UpdateSupplierAsync_WhenSupplierIdIsInvalid_ShouldThrowDomainException()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
             .WithId(0)
             .Build();
 
-        var result = await SupplierService.UpdateSupplierAsync(supplier);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.UpdateSupplierAsync(supplier));
 
         SupplierRepositoryMock.Verify(
             r => r.GetByIdAsync(It.IsAny<int>()),
@@ -232,9 +260,8 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             Times.Never);
     }
 
-
     [Fact]
-    public async Task UpdateSupplierAsync_WhenTaxIdAlreadyExists_ShouldReturnFalse()
+    public async Task UpdateSupplierAsync_WhenTaxIdAlreadyExists_ShouldThrowDomainException()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
@@ -250,9 +277,7 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             .Setup(r => r.GetByTaxIdAsync(supplier.TaxId))
             .ReturnsAsync(existingSupplier);
 
-        var result = await SupplierService.UpdateSupplierAsync(supplier);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.UpdateSupplierAsync(supplier));
 
         SupplierRepositoryMock.Verify(
             r => r.GetByIdAsync(It.IsAny<int>()),
@@ -263,9 +288,8 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             Times.Never);
     }
 
-
     [Fact]
-    public async Task UpdateSupplierAsync_WhenSupplierDoesNotExist_ShouldReturnFalse()
+    public async Task UpdateSupplierAsync_WhenSupplierDoesNotExist_ShouldThrowNotFoundException()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
@@ -279,18 +303,15 @@ public class SupplierServiceTests : SupplierServiceTestsBase
             .Setup(r => r.GetByIdAsync(supplier.Id))
             .ReturnsAsync((Supplier?)null);
 
-        var result = await SupplierService.UpdateSupplierAsync(supplier);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(() => SupplierService.UpdateSupplierAsync(supplier));
 
         SupplierRepositoryMock.Verify(
             r => r.UpdateSupplierAsync(It.IsAny<Supplier>()),
             Times.Never);
     }
 
-
     [Fact]
-    public async Task RemoveSupplierAsync_WhenSupplierIsValid_ShouldReturnTrue()
+    public async Task RemoveSupplierAsync_WhenSupplierIsValid_ShouldRemoveSuccessfully()
     {
         var supplier = new SupplierBuilder()
             .WithValidData()
@@ -302,41 +323,52 @@ public class SupplierServiceTests : SupplierServiceTestsBase
 
         SupplierRepositoryMock
             .Setup(r => r.RemoveSupplierAsync(supplier))
-            .ReturnsAsync(true);
+            .Returns(Task.CompletedTask);
 
-        var result = await SupplierService.RemoveSupplierAsync(supplier.Id);
-
-        Assert.True(result);
+        await SupplierService.RemoveSupplierAsync(supplier.Id);
 
         SupplierRepositoryMock.Verify(
             r => r.RemoveSupplierAsync(supplier),
             Times.Once);
     }
 
-
     [Fact]
-    public async Task RemoveSupplierAsync_WhenSupplierIdIsInvalid_ShouldReturnFalse()
+    public async Task RemoveSupplierAsync_WhenSupplierIdIsInvalid_ShouldThrowDomainException()
     {
-        var result = await SupplierService.RemoveSupplierAsync(0);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.RemoveSupplierAsync(0));
 
         SupplierRepositoryMock.Verify(
             r => r.GetByIdAsync(It.IsAny<int>()),
             Times.Never);
     }
 
-
     [Fact]
-    public async Task RemoveSupplierAsync_WhenSupplierDoesNotExist_ShouldReturnFalse()
+    public async Task RemoveSupplierAsync_WhenSupplierDoesNotExist_ShouldThrowNotFoundException()
     {
         SupplierRepositoryMock
             .Setup(r => r.GetByIdAsync(1))
             .ReturnsAsync((Supplier?)null);
 
-        var result = await SupplierService.RemoveSupplierAsync(1);
+        await Assert.ThrowsAsync<NotFoundException>(() => SupplierService.RemoveSupplierAsync(1));
 
-        Assert.False(result);
+        SupplierRepositoryMock.Verify(
+            r => r.RemoveSupplierAsync(It.IsAny<Supplier>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task RemoveSupplierAsync_WhenSupplierHasLinkedProducts_ShouldThrowDomainException()
+    {
+        var supplier = new SupplierBuilder()
+            .WithValidData()
+            .WithProducts(new List<Product> { new ProductBuilder().WithValidData().Build() })
+            .Build();
+
+        SupplierRepositoryMock
+            .Setup(r => r.GetByIdAsync(supplier.Id))
+            .ReturnsAsync(supplier);
+
+        await Assert.ThrowsAsync<DomainException>(() => SupplierService.RemoveSupplierAsync(supplier.Id));
 
         SupplierRepositoryMock.Verify(
             r => r.RemoveSupplierAsync(It.IsAny<Supplier>()),

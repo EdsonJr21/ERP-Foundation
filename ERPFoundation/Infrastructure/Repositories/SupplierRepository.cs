@@ -14,13 +14,12 @@ public class SupplierRepository : ISupplierRepository
         _context = context;
     }
 
-    public async Task<bool> AddSupplierAsync(Supplier supplier)
+    public async Task AddSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
         await _context.Suppliers.AddAsync(supplier);
-
-        return await _context.SaveChangesAsync() > 0;
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<Supplier>> ListSuppliersAsync()
@@ -31,6 +30,7 @@ public class SupplierRepository : ISupplierRepository
     public async Task<Supplier?> GetByIdAsync(int id)
     {
         return await _context.Suppliers
+            .Include(x => x.Products)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
 
@@ -40,21 +40,19 @@ public class SupplierRepository : ISupplierRepository
             .FirstOrDefaultAsync(f => f.TaxId == taxId);
     }
 
-    public async Task<bool> UpdateSupplierAsync(Supplier supplier)
+    public async Task UpdateSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
         _context.Suppliers.Update(supplier);
-
-        return await _context.SaveChangesAsync() > 0;
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> RemoveSupplierAsync(Supplier supplier)
+    public async Task RemoveSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
         _context.Suppliers.Remove(supplier);
-
-        return await _context.SaveChangesAsync() > 0;
+        await _context.SaveChangesAsync();
     }
 }

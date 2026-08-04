@@ -7,13 +7,12 @@ namespace ERPFoundation.Infrastructure.Repositories;
 
 public class ProductRepository(AppDbContext context) : IProductRepository
 {
-    public async Task<bool> AddProductsAsync(Product product)
+    public async Task AddProductsAsync(Product product)
     {
         ArgumentNullException.ThrowIfNull(product);
 
         context.Products.Add(product);
         await context.SaveChangesAsync();
-        return true;
     }
 
     public async Task<List<Product>> ListProductsAsync()
@@ -34,13 +33,12 @@ public class ProductRepository(AppDbContext context) : IProductRepository
         return await ApplyDefaultOrdering(query).ToListAsync();
     }
 
-    public async Task<bool> UpdateProductsAsync(Product product)
+    public async Task UpdateProductsAsync(Product product)
     {
         ArgumentNullException.ThrowIfNull(product);
 
         context.Products.Update(product);
-
-        return await context.SaveChangesAsync() > 0;
+        await context.SaveChangesAsync();
     }
 
     public async Task<Product?> GetByIdAsync(int id)
@@ -48,13 +46,12 @@ public class ProductRepository(AppDbContext context) : IProductRepository
         return await context.Products.FindAsync(id);
     }
 
-    public async Task<bool> RemoveProductsAsync(Product product)
+    public async Task RemoveProductsAsync(Product product)
     {
-        if (product == null) throw new ArgumentNullException(nameof(product));
+        ArgumentNullException.ThrowIfNull(product);
 
         context.Products.Remove(product);
         await context.SaveChangesAsync();
-        return true;
     }
 
     private static IQueryable<Product> ApplyDefaultOrdering(IQueryable<Product> query)

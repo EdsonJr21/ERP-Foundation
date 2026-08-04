@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using ERPFoundation.API.Responses;
+using ERPFoundation.Domain.Exceptions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,8 +33,8 @@ public class ExceptionHandlingMiddleware(
     {
         var statusCode = exception switch
         {
-            ValidationException or ArgumentException => HttpStatusCode.BadRequest,
-            KeyNotFoundException => HttpStatusCode.NotFound,
+            ValidationException or ArgumentException or DomainException => HttpStatusCode.BadRequest,
+            NotFoundException or KeyNotFoundException => HttpStatusCode.NotFound,
             DbUpdateException => HttpStatusCode.Conflict,
             _ => HttpStatusCode.InternalServerError
         };
@@ -41,7 +42,7 @@ public class ExceptionHandlingMiddleware(
         var message = exception switch
         {
             ValidationException => "Validation error.",
-            ArgumentException or KeyNotFoundException => exception.Message,
+            DomainException or NotFoundException or ArgumentException or KeyNotFoundException => exception.Message,
             DbUpdateException => "Database update error.",
             _ => "An internal server error occurred."
         };

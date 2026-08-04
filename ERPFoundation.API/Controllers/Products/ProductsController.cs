@@ -24,12 +24,7 @@ public class ProductsController(IProductService productService, IMapper mapper) 
     public async Task<IActionResult> GetById(int id)
     {
         var product = await productService.GetByIdAsync(id);
-
-        if (product is null)
-        {
-            throw new KeyNotFoundException("Product not found.");
-        }
-
+        
         var productDto = mapper.Map<ProductResponseDto>(product);
 
         return Ok(productDto);
@@ -40,12 +35,7 @@ public class ProductsController(IProductService productService, IMapper mapper) 
     {
         var product = mapper.Map<Product>(dto);
 
-        var result = await productService.CreateProductAsync(product);
-
-        if (!result)
-        {
-            throw new ArgumentException("Invalid data, SKU already registered, or invalid supplier.");
-        }
+        await productService.CreateProductAsync(product);
 
         var productDto = mapper.Map<ProductResponseDto>(product);
 
@@ -60,31 +50,19 @@ public class ProductsController(IProductService productService, IMapper mapper) 
     public async Task<IActionResult> Update(int id, UpdateProductDto dto)
     {
         var product = await productService.GetByIdAsync(id);
-
-        if (product is null)
-        {
-            throw new KeyNotFoundException("Product not found.");
-        }
-
+        
         mapper.Map(dto, product);
 
-        var result = await productService.UpdateProductsAsync(product);
+        await productService.UpdateProductsAsync(product);
 
-        return !result ? throw new ArgumentException("Could not update the product.") : NoContent();
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remove(int id)
     {
-        var existingProduct = await productService.GetByIdAsync(id);
+        await productService.RemoveProductsAsync(id);
 
-        if (existingProduct is null)
-        {
-            throw new KeyNotFoundException("Product not found.");
-        }
-
-        var result = await productService.RemoveProductsAsync(id);
-
-        return !result ? throw new ArgumentException("Could not remove the product.") : NoContent();
+        return NoContent();
     }
 }

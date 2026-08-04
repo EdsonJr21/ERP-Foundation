@@ -1,3 +1,4 @@
+using ERPFoundation.Domain.Exceptions;
 using ERPFoundation.Domain.Models;
 using ERPFoundation.Application.Services.Interfaces;
 using ERPFoundation.Infrastructure.Repositories.Interfaces;
@@ -14,7 +15,7 @@ public class SupplierService : ISupplierService
         _supplierRepository = supplierRepository;
     }
 
-    public async Task<bool> AddSupplierAsync(Supplier supplier)
+    public async Task AddSupplierAsync(Supplier supplier)
     {
         ArgumentNullException.ThrowIfNull(supplier);
 
@@ -22,10 +23,12 @@ public class SupplierService : ISupplierService
 
         if (!await IsTaxIdAvailableAsync(supplier.TaxId))
         {
-            return false;
+            throw new DomainException(
+                "A supplier with this TaxId already exists."
+            );
         }
 
-        return await _supplierRepository.AddSupplierAsync(supplier);
+        await _supplierRepository.AddSupplierAsync(supplier);
     }
 
     public async Task<List<Supplier>> ListSuppliersAsync()
@@ -33,77 +36,97 @@ public class SupplierService : ISupplierService
         return await _supplierRepository.ListSuppliersAsync();
     }
 
-    public async Task<Supplier?> GetByIdAsync(int id)
+    public async Task<Supplier> GetByIdAsync(int id)
     {
         if (id <= 0)
         {
-            return null;
-        }
-
-        return await _supplierRepository.GetByIdAsync(id);
-    }
-
-    public async Task<bool> UpdateSupplierAsync(Supplier supplier)
-    {
-        ArgumentNullException.ThrowIfNull(supplier);
-
-        if (supplier.Id <= 0)
-        {
-            return false;
-        }
-
-        NormalizeSupplier(supplier);
-
-        if (!await IsTaxIdAvailableAsync(supplier.TaxId, supplier.Id))
-        {
-            return false;
-        }
-
-        var existingSupplier = await _supplierRepository.GetByIdAsync(supplier.Id);
-
-        if (existingSupplier is null)
-        {
-            return false;
-        }
-
-        existingSupplier.Name = supplier.Name;
-        existingSupplier.TaxId = supplier.TaxId;
-        existingSupplier.Address = supplier.Address;
-
-        return await _supplierRepository.UpdateSupplierAsync(existingSupplier);
-    }
-
-    public async Task<bool> RemoveSupplierAsync(int id)
-    {
-        if (id <= 0)
-        {
-            return false;
+            throw new DomainException("Invalid supplier ID.");
         }
 
         var supplier = await _supplierRepository.GetByIdAsync(id);
 
         if (supplier is null)
         {
-            return false;
+            throw new NotFoundException("Supplier not found.");
         }
 
-        return await _supplierRepository.RemoveSupplierAsync(supplier);
+        return supplier;
+    }
+
+    public async Task UpdateSupplierAsync(Supplier supplier)
+    {
+        ArgumentNullException.ThrowIfNull(supplier);
+
+        if (supplier.Id <= 0)
+        {
+            throw new DomainException("Invalid supplier ID.");
+        }
+
+        NormalizeSupplier(supplier);
+
+        if (!await IsTaxIdAvailableAsync(supplier.TaxId, supplier.Id))
+        {
+            throw new DomainException(
+                "A supplier with this TaxId already exists."
+            );
+        }
+
+        var existingSupplier = await _supplierRepository.GetByIdAsync(supplier.Id);
+
+        if (existingSupplier is null)
+        {
+            throw new NotFoundException($"Supplier with ID {supplier.Id} was not found.");
+        }
+
+        if (existingSupplier.TaxId != supplier.TaxId)
+        {
+            throw new DomainException("Supplier TaxId cannot be changed.");
+        }
+
+        existingSupplier.Name = supplier.Name;
+        existingSupplier.Address = supplier.Address;
+
+        await _supplierRepository.UpdateSupplierAsync(existingSupplier);
+    }
+
+    public async Task RemoveSupplierAsync(int id)
+    {
+        if (id <= 0)
+        {
+            throw new DomainException("Invalid supplier ID.");
+        }
+
+        var supplier = await _supplierRepository.GetByIdAsync(id);
+
+        if (supplier is null)
+        {
+            throw new NotFoundException($"Supplier with ID {id} was not found.");
+        }
+
+        if (supplier.Products.Any())
+        {
+            throw new DomainException(
+                "Cannot remove supplier with linked products."
+            );
+        }
+
+        await _supplierRepository.RemoveSupplierAsync(supplier);
     }
 
     private async Task<bool> IsTaxIdAvailableAsync(string taxId, int? supplierId = null)
     {
         var existingSupplier = await _supplierRepository.GetByTaxIdAsync(taxId);
-        
+
         if (existingSupplier is null)
         {
-            return true; 
+            return true;
         }
-        
+
         if (supplierId.HasValue && existingSupplier.Id == supplierId.Value)
         {
             return true;
         }
-        
+
         return false;
     }
 

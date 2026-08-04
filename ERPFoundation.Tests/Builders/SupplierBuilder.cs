@@ -41,5 +41,11 @@ public class SupplierBuilder
         return this;
     }
 
+    public SupplierBuilder WithProducts(List<Product> products)
+    {
+        _supplier.Products = products;
+        return this;
+    }
+
     public Supplier Build() => _supplier;
 }

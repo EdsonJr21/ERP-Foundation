@@ -1,4 +1,5 @@
 using ERPFoundation.Application.Services.Interfaces;
+using ERPFoundation.Domain.Exceptions;
 using ERPFoundation.Domain.Models;
 using ERPFoundation.Infrastructure.Repositories.Interfaces;
 
@@ -14,7 +15,7 @@ public class ProductService : IProductService
         _productRepository = productRepository;
     }
 
-    public async Task<bool> CreateProductAsync(Product product)
+    public async Task CreateProductAsync(Product product)
     {
         ArgumentNullException.ThrowIfNull(product);
 
@@ -22,15 +23,15 @@ public class ProductService : IProductService
 
         if (await _productRepository.ExistsSkuAsync(product.Sku))
         {
-            return false;
+            throw new DomainException($"SKU '{product.Sku}' already exists.");
         }
 
         if (!await _productRepository.ExistsSupplierAsync(product.SupplierId))
         {
-            return false;
+            throw new NotFoundException($"Supplier with id {product.SupplierId} was not found.");
         }
 
-        return await _productRepository.AddProductsAsync(product);
+        await _productRepository.AddProductsAsync(product);
     }
 
     public async Task<List<Product>> ListProductsAsync()
@@ -48,73 +49,79 @@ public class ProductService : IProductService
         return await _productRepository.SearchProductsAsync(name.Trim());
     }
 
-    public async Task<Product?> GetByIdAsync(int id)
+    public async Task<Product> GetByIdAsync(int id)
     {
         if (id <= 0)
         {
-            return null;
-        }
-
-        return await _productRepository.GetByIdAsync(id);
-    }
-
-    public async Task<bool> UpdateProductsAsync(Product product)
-    {
-        ArgumentNullException.ThrowIfNull(product);
-
-        if (product.Id <= 0)
-        {
-            return false;
-        }
-        
-        NormalizeProduct(product);
-        
-        var existingProduct = await _productRepository.GetByIdAsync(product.Id);
-
-        if (existingProduct is null)
-        {
-            return false;
-        }
-
-        if (await _productRepository.ExistsSkuAsync(product.Sku, product.Id))
-        {
-            return false;
-        }
-
-        if (!await _productRepository.ExistsSupplierAsync(product.SupplierId))
-        {
-            return false;
-        }
-
-        existingProduct.Name = product.Name;
-        existingProduct.Sku = product.Sku;
-        existingProduct.Price = product.Price;
-        existingProduct.Quantity = product.Quantity;
-        existingProduct.SupplierId = product.SupplierId;
-
-        return await _productRepository.UpdateProductsAsync(existingProduct);
-    }
-
-    public async Task<bool> RemoveProductsAsync(int id)
-    {
-        if (id <= 0)
-        {
-            return false;
+            throw new DomainException("Invalid product ID.");
         }
 
         var product = await _productRepository.GetByIdAsync(id);
 
         if (product is null)
         {
-            return false;
+            throw new NotFoundException("Product not found.");
+        }
+
+        return product;
+    }
+
+    public async Task UpdateProductsAsync(Product product)
+    {
+        ArgumentNullException.ThrowIfNull(product);
+
+        if (product.Id <= 0)
+        {
+            throw new DomainException("Product id must be greater than zero.");
+        }
+
+        NormalizeProduct(product);
+
+        var existingProduct = await _productRepository.GetByIdAsync(product.Id);
+
+        if (existingProduct is null)
+        {
+            throw new NotFoundException($"Product with id {product.Id} was not found.");
+        }
+
+        if (await _productRepository.ExistsSkuAsync(product.Sku, product.Id))
+        {
+            throw new DomainException($"SKU '{product.Sku}' already exists.");
+        }
+
+        if (!await _productRepository.ExistsSupplierAsync(product.SupplierId))
+        {
+            throw new NotFoundException($"Supplier with id {product.SupplierId} was not found.");
+        }
+
+        existingProduct.Name = product.Name;
+        existingProduct.Price = product.Price;
+        existingProduct.Quantity = product.Quantity;
+        existingProduct.SupplierId = product.SupplierId;
+
+        await _productRepository.UpdateProductsAsync(existingProduct);
+    }
+
+    public async Task RemoveProductsAsync(int id)
+    {
+        if (id <= 0)
+        {
+            throw new DomainException("Product id must be greater than zero.");
+        }
+
+        var product = await _productRepository.GetByIdAsync(id);
+
+        if (product is null)
+        {
+            throw new NotFoundException($"Product with id {id} was not found.");
         }
 
         if (product.Quantity > 0)
         {
-            return false;
+            throw new DomainException("Products with stock cannot be removed.");
         }
 
-        return await _productRepository.RemoveProductsAsync(product);
+        await _productRepository.RemoveProductsAsync(product);
     }
 
     private static void NormalizeProduct(Product product)

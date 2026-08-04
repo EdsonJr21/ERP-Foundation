@@ -25,7 +25,7 @@ public class ValidationFilter(IServiceProvider serviceProvider) : IAsyncActionFi
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
         }
-
+        
         await next();
     }
 }

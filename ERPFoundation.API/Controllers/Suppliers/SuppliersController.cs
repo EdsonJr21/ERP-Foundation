@@ -25,11 +25,6 @@ public class SuppliersController(ISupplierService supplierService, IMapper mappe
     {
         var supplier = await supplierService.GetByIdAsync(id);
 
-        if (supplier is null)
-        {
-            throw new KeyNotFoundException("Supplier not found.");
-        }
-
         var supplierDto = mapper.Map<SupplierResponseDto>(supplier);
 
         return Ok(supplierDto);
@@ -40,12 +35,7 @@ public class SuppliersController(ISupplierService supplierService, IMapper mappe
     {
         var supplier = mapper.Map<Supplier>(dto);
 
-        var result = await supplierService.AddSupplierAsync(supplier);
-
-        if (!result)
-        {
-            throw new ArgumentException("Invalid data or supplier already registered.");
-        }
+        await supplierService.AddSupplierAsync(supplier);
 
         var supplierDto = mapper.Map<SupplierResponseDto>(supplier);
 
@@ -61,30 +51,18 @@ public class SuppliersController(ISupplierService supplierService, IMapper mappe
     {
         var existingSupplier = await supplierService.GetByIdAsync(id);
 
-        if (existingSupplier is null)
-        {
-            throw new KeyNotFoundException("Supplier not found.");
-        }
-
         mapper.Map(dto, existingSupplier);
 
-        var result = await supplierService.UpdateSupplierAsync(existingSupplier);
+        await supplierService.UpdateSupplierAsync(existingSupplier);
 
-        return !result ? throw new ArgumentException("Invalid data or Tax ID already registered.") : NoContent();
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remove(int id)
     {
-        var existingSupplier = await supplierService.GetByIdAsync(id);
+        await supplierService.RemoveSupplierAsync(id);
 
-        if (existingSupplier is null)
-        {
-            throw new KeyNotFoundException("Supplier not found.");
-        }
-
-        var result = await supplierService.RemoveSupplierAsync(id);
-
-        return !result ? throw new ArgumentException("Could not remove the supplier.") : NoContent();
+        return NoContent();
     }
 }
