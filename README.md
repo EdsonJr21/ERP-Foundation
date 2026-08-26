@@ -63,13 +63,6 @@ Após executar a aplicação, acesse o **Swagger** para testar os endpoints da A
 * [x] FluentValidation
 * [x] Middleware Global de Exceções
 * [x] Testes Unitários
-* [ ] Testes de Integração
-* [ ] Autenticação e Autorização (JWT)
-* [ ] Clientes
-* [ ] Pedidos
-* [ ] Arquitetura de Monólito Modular
-* [ ] Docker
-* [ ] CI/CD
 
 ---
 
